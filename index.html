@@ -1,0 +1,36 @@
+<!doctype html>
+<html ng-app='myApp'>
+  <head>
+    <link rel="stylesheet" href="app/Styles/global.css">
+  </head>
+  <body>
+    	<div ng-controller="mainController">
+          <h1 ng-hide="$storage.items.length">You have nothing to do!</h1>
+          <div class="notesArea" ng-show="$storage.items.length">
+          		<ul class="toDoList">
+          			<li ng-repeat="item in $storage.items | orderBy: '-importance'">
+                    <div class="itemContainer" style="background:{{importanceColors[item.importance]}}">
+                      <p class='closeBtn' ng-click="deleteItem(item.id)">x</p>
+                      <label class="dateLbl">{{item.date | date:'MM-dd'}}</label>
+                      <br>
+            		  <edit-in-place value="item.text"></edit-in-place>
+                    </div>
+          			</li>
+          		</ul>
+          </div>
+      		<div class="addItemCtrlsBox clear">
+        			<textarea class='newTextBox' type="text" ng-model="newItemText"></textarea>
+        			<input class='addBtn' type="button" value="+" ng-click="addItem(newItemText)"/>
+      		</div>
+          <div class="importanceBox">
+                <label>IMPORTANCE: </label>
+                <input type="radio" name="importance" value="2" ng-model="importance">High</input>
+                <input type="radio" name="importance" value="1" ng-model="importance">Normal</input>
+                <input type="radio" name="importance" value="0" ng-model="importance">Low</input>
+          </div>
+      </div>
+      <script src="app/Vendor/angular.min.js"></script>
+      <script src="app/Vendor/ngStorage.min.js"></script>
+      <script src="app/js/main.js"></script>
+  </body>
+</html>

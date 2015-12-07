@@ -1,0 +1,120 @@
+.notesArea{
+	width: 80%;
+}
+
+.toDoList{
+	list-style: none;
+	padding: 0;
+}
+
+.toDoList > li{
+	display: inline-block;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	vertical-align: top;
+}
+
+.itemText{
+	display: block;
+	margin-top: 5px;
+	font-size: 14pt;
+	cursor: normal;
+}
+
+.closeBtn{
+	display: block;
+	position: relative;
+	top: -20px;
+	right: -5px;
+	font-size: 14pt;
+	text-align: center;
+	cursor:pointer;
+	margin: 0;
+	padding: 0;
+	float: right;
+}
+
+.addBtn{
+	height: 50px;
+	width: 50px;
+	font-size: 16pt;
+	color: green;
+	background-color: transparent;
+	border: 1px solid gray;
+	border-radius: 5px;
+	float: left;
+	margin-left: 5px; 
+}
+
+.addBtn:hover{
+	background-color: #C0ECBD;
+}
+
+.dateLbl{
+	position: relative;
+	top: -15px;
+	left: -10px;
+	float:left;
+	font-size: 10pt;
+}
+
+.itemContainer{	
+	display: block;
+	position: relative;
+	border-style: solid;
+	width: 250px;
+	min-height: 50px;
+	border-color: #BBBBBB;
+	border-width: 1px 1px 3px 2px;
+	border-radius: 5px;
+	padding: 15px 10px 10px 10px;
+	margin-bottom: 5px;
+	background-color: #FCFF2C;
+}
+
+.addItemCtrlsBox{
+	position: relative;
+	display: inline-block;
+}
+
+.newTextBox{
+	min-height: 50px;
+	float: left;
+	resize: none;
+}
+
+.editArea{
+	background-color: transparent;
+	border-style: none;
+	outline: none;
+	resize: none;
+}
+
+edit-in-place{
+	position: relative;
+	top: -10px;
+}
+
+.edit-in-place span {
+  cursor: pointer;
+}
+
+.edit-in-place textarea {
+  display: none;
+}
+
+.edit-in-place.active span {
+  display: none;
+}
+
+.edit-in-place.active textarea {
+  display: inline-block;
+}
+
+textarea{
+	border-radius: 5px;
+}
+
+.clear{
+	clear:both;
+}
