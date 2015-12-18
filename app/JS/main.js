@@ -64,7 +64,7 @@ app.controller('mainController', function($scope, $localStorage, $sessionStorage
 		$localStorage.items = [];
 	}
 	else if($scope.$storage.items.length > 0){
-		itemID = $scope.$storage.items[$scope.$storage.items.length - 1].id + 1;
+		tabId = $scope.$storage.items[$scope.$storage.items.length - 1].id + 1;
 	}
 
 	if($scope.$storage.tabs[0]){
