@@ -1,3 +1,33 @@
+html{
+	font-family: Helvetica Arial Verdana;
+}
+
+.appHeader{
+	font-size: 18pt;
+}
+
+.tabList{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.tabList li{
+	float: left;
+    border: 1px solid #000;
+    border-bottom-width: 0;
+    border-radius: 10px 10px 0 0;
+    padding: 10px;
+    background-color: #CCC;
+    color: #696969;
+}
+
+#mainView{
+	border: 1px solid black;
+	clear: both;
+	padding: 0 1em;
+}
+
 .notesArea{
 	width: 80%;
 }
@@ -34,6 +64,19 @@
 	float: right;
 }
 
+.delBtn{
+	display: block;
+	position: relative;
+	top: -14px;
+	right: -3px;
+	font-size: 13pt;
+	text-align: center;
+	cursor:pointer;
+	margin: 0;
+	padding: 0;
+	float: right;
+}
+
 .addBtn{
 	height: 50px;
 	width: 50px;
@@ -48,6 +91,27 @@
 
 .addBtn:hover{
 	background-color: #C0ECBD;
+}
+
+.addTabBtn{
+	height: 39px;
+	width: 39px;
+	font-size: 16pt;
+	color: green;
+	background-color: transparent;
+	border: 1px solid gray;
+	border-radius: 10px;
+	float: left;
+}
+
+.addTabBtn:hover{
+	background-color: #C0ECBD;
+}
+
+.newTabName{
+	vertical-align: center;
+	display: inline-block;
+	vertical-align: middle;
 }
 
 .dateLbl{
@@ -90,24 +154,46 @@
 	resize: none;
 }
 
-edit-in-place{
+.itemEdit{
 	position: relative;
 	top: -10px;
 }
 
-.edit-in-place span {
+.tabEdit{
+	position: relative;
+	top: 5px;
+}
+
+.edit-in-place-single span {
   cursor: pointer;
 }
 
-.edit-in-place textarea {
+.edit-in-place-single input {
+  display: none;
+  width: 75px;
+}
+
+.edit-in-place-single.active span {
   display: none;
 }
 
-.edit-in-place.active span {
+.edit-in-place-single.active input {
+  display: inline-block;
+}
+
+.edit-in-place-multi span {
+  cursor: pointer;
+}
+
+.edit-in-place-multi textarea {
   display: none;
 }
 
-.edit-in-place.active textarea {
+.edit-in-place-multi.active span {
+  display: none;
+}
+
+.edit-in-place-multi.active textarea {
   display: inline-block;
 }
 
@@ -117,4 +203,9 @@ textarea{
 
 .clear{
 	clear:both;
+}
+
+.active {
+    background-color: #FFF !important;
+    color: #000 !important;
 }

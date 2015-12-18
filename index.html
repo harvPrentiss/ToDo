@@ -4,30 +4,44 @@
     <link rel="stylesheet" href="app/Styles/global.css">
   </head>
   <body>
+      <h1 class="appHeader">Get organized and keep a To Do list</h1>
     	<div ng-controller="mainController">
-          <h1 ng-hide="$storage.items.length">You have nothing to do!</h1>
-          <div class="notesArea" ng-show="$storage.items.length">
-          		<ul class="toDoList">
-          			<li ng-repeat="item in $storage.items | orderBy: '-importance'">
-                    <div class="itemContainer" style="background:{{importanceColors[item.importance]}}">
-                      <p class='closeBtn' ng-click="deleteItem(item.id)">x</p>
-                      <label class="dateLbl">{{item.date | date:'MM-dd'}}</label>
-                      <br>
-            		  <edit-in-place value="item.text"></edit-in-place>
-                    </div>
-          			</li>
-          		</ul>
+        <div id="tabs">
+          <ul class="tabList">
+            <li class="tab" ng-repeat="tab in $storage.tabs" ng-class="{active:isActiveTab(tab.id)}" ng-click="onClickTab(tab)">
+              <edit-in-place-single class="tabEdit" value="tab.title" ng-model="newTabName" ng-keypress="loseFocus($event)"></edit-in-place-single>
+              <p class="delBtn" ng-click="deleteTab(tab.id)">x</p>
+            </li>
+            <div class="addTabContainer">
+              <button class="addTabBtn" ng-click="addTab()">+</button>
+            </div>
+          </ul>
+          <div id="mainView" ng-show="$storage.tabs.length">
+            <h1 ng-hide="$storage.items.length">You have nothing to do!</h1>
+            <div class="notesArea" ng-show="$storage.items.length">
+                <ul class="toDoList">
+                  <li ng-repeat="item in $storage.items | filter:{tabId: currentTab} | orderBy: '-importance'">
+                      <div class="itemContainer" style="background:{{importanceColors[item.importance]}}">
+                        <p class='closeBtn' ng-click="deleteItem(item.id)">x</p>
+                        <label class="dateLbl">{{item.date | date:'MM-dd'}}</label>
+                        <br>
+                    <edit-in-place-multi class="itemEdit" value="item.text" ng-keypress="loseFocus($event)"></edit-in-place>
+                      </div>
+                  </li>
+                </ul>
+            </div>
+            <div class="addItemCtrlsBox clear">
+              <textarea class='newTextBox' type="text" ng-model="newItemText" ></textarea>
+              <input class='addBtn' type="button" value="+" ng-click="addItem(newItemText)"/>
           </div>
-      		<div class="addItemCtrlsBox clear">
-        			<textarea class='newTextBox' type="text" ng-model="newItemText"></textarea>
-        			<input class='addBtn' type="button" value="+" ng-click="addItem(newItemText)"/>
-      		</div>
           <div class="importanceBox">
                 <label>IMPORTANCE: </label>
                 <input type="radio" name="importance" value="2" ng-model="importance">High</input>
                 <input type="radio" name="importance" value="1" ng-model="importance">Normal</input>
                 <input type="radio" name="importance" value="0" ng-model="importance">Low</input>
           </div>
+          </div>
+        </div>
       </div>
       <script src="app/Vendor/angular.min.js"></script>
       <script src="app/Vendor/ngStorage.min.js"></script>
