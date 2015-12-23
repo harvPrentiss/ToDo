@@ -2,35 +2,20 @@ angular.module('toDoApp')
 
 .controller('mainController', mainController);
 
-mainController.$inject = ['$scope', '$rootScope', '$localStorage', '$sessionStorage'];
+mainController.$inject = ['$scope', '$rootScope', '$location', '$http', 'Session', ''];
 
-function mainController($scope, $rootScope, $localStorage, $sessionStorage)
+function mainController($scope, $rootScope, $location, $http)
 {
 	var itemID = 1;
 	var tabId = 1;
 	$scope.title = "TO DO";
 	$scope.importance = 1;
 	$scope.importanceColors = ["#89C1F1", "#FFFF64", "#DA5353"];
-	$scope.$storage = $localStorage;
-	if($localStorage.tabs === undefined){
-		$localStorage.tabs = [];
-	}
-	else if($scope.$storage.tabs.length > 0){
-		tabId = $scope.$storage.tabs[$scope.$storage.tabs.length - 1].id + 1;
-		$scope.currentTab = $scope.$storage.tabs[0].id;
-	}
-	if($localStorage.items === undefined){
-		$localStorage.items = [];
-	}
-	else if($scope.$storage.items.length > 0){
-		tabId = $scope.$storage.items[$scope.$storage.items.length - 1].id + 1;
-	}
+	$scope.tabs = [];
+	$scope.items = [];
+	$scope.currentTab = 0;
 
-	if($scope.$storage.tabs[0]){
-		$scope.currentTab = $scope.$storage.tabs[0].id;
-	}
-
-    $scope.onClickTab = function (tab) {
+	$scope.onClickTab = function (tab) {
         $scope.currentTab = tab.id;
     }
     
@@ -39,39 +24,125 @@ function mainController($scope, $rootScope, $localStorage, $sessionStorage)
     }
 
 	$scope.addItem = function(itemText){
-		$scope.$storage.items.push({id:itemID, tabId: $scope.currentTab, text:itemText, importance:parseInt($scope.importance), date:Date.now()});
-		itemID++;
-		$scope.newItemText = "";
+		var addItemData = {tabId: $scope.currentTab, text:itemText, importance:parseInt($scope.importance), date:Date.now(), action:'addItem'};
+		$http({
+			method: 'POST',
+			url:'app/PHP/dataRetriever.php',
+			data: addItemData
+		})
+		.then(function(res){
+			if(res.data.message == "Success"){
+				$scope.items.push({id:res.data.itemID, tabId: $scope.currentTab, text:itemText, importance:parseInt($scope.importance), date:Date.now()});
+				itemID++;
+				$scope.newItemText = "";
+			}
+			else{
+				Flash.create('danger', 'Failed to create new tab', 'custom-class');
+			}			
+		});
 	};
 
-	$scope.addTab = function(){
-		$scope.$storage.tabs.push({id:tabId, title:"New Tab " + tabId});
-		tabId++;
+	$scope.addTab = function(){		
+		var addTabData = {title:"New Tab", action:'addTab'};
+		$http({
+			method: 'POST',
+			url:'app/PHP/dataRetriever.php',
+			data: addTabData
+		})
+		.then(function(res){
+			if(res.data.message == "Success"){
+				$scope.tabs.push({id:res.data.tabId, title:"New Tab"});
+				tabId++;
+			}
+			else{
+				Flash.create('danger', 'Failed to create new tab', 'custom-class');
+			}			
+		});
 	};
 
 	$scope.deleteItem = function(itemID){
-		var index = indexOfItem(itemID);
-		if(index != -1){
-  			$scope.$storage.items.splice(index, 1);
-  		}
+		var delItemData = {id:itemId, action:'delItem'};
+		$http({
+			method: 'POST',
+			url:'app/PHP/dataRetriever.php',
+			data: delItemData
+		})
+		.then(function(res){
+			if(res.data.message == "Success"){
+				var index = indexOfItem(itemID);
+				if(index != -1){
+		  			$scope.items.splice(index, 1);
+		  		}
+			}
+			else{
+				Flash.create('danger', 'Failed to delete item', 'custom-class');
+			}			
+		});
+		
 	};
 
 	$scope.deleteTab = function(tabId){
-		var index = indexOfTab(tabId);
-		if(index != -1){
-  			$scope.$storage.tabs.splice(index, 1);
-  		}
+		var delTabData = {id:tabId, action:'delTab'};
+		$http({
+			method: 'POST',
+			url:'app/PHP/dataRetriever.php',
+			data: delTabData
+		})
+		.then(function(res){
+			if(res.data.message == "Success"){
+				var index = indexOfTab(tabId);
+				if(index != -1){
+		  			$scope.tabs.splice(index, 1);
+		  		}
+			}
+			else{
+				Flash.create('danger', 'Failed to delete tab', 'custom-class');
+			}			
+		});
+		
 	};
 
-	$scope.loseFocus = function(event){
-		if(event.which == 13){
-			event.srcElement.blur();
-		}
+	$scope.loseFocus = function(event, object){
+		if(event.which == 13){	
+			var changeData;
+			if(object.itemId){
+				changeData = {itemId:object.itemId, itemText:object.text, action:'editItem'};
+				$http({
+				method: 'POST',
+				url:'app/PHP/dataRetriever.php',
+				data: changeData
+			})
+			.then(function(res){
+				if(res.data.message == "Success"){
+					event.srcElement.blur();
+				}
+				else{
+					Flash.create('danger', 'Failed to delete tab', 'custom-class');
+				}			
+			});	
+			}
+			else{
+				changeData = {tabId:object.tabId, tabText:object.title, action:'editTab'};
+				$http({
+					method: 'POST',
+					url:'app/PHP/dataRetriever.php',
+					data: changeData
+				})
+				.then(function(res){
+					if(res.data.message == "Success"){
+						event.srcElement.blur();
+					}
+					else{
+						Flash.create('danger', 'Failed to delete tab', 'custom-class');
+					}			
+				});	
+			}
+		}			
 	};
 
 	function indexOfItem(itemID){
 		var index = -1;
-		var length = $scope.$storage.items.length;
+		var length = $scope.items.length;
 		for(var i = 0; i < length; i++) {
 		    if ($scope.$storage.items[i].id == itemID) {
 		        return i;
@@ -81,11 +152,15 @@ function mainController($scope, $rootScope, $localStorage, $sessionStorage)
 
 	function indexOfTab(tabId){
 		var index = -1;
-		var length = $scope.$storage.tabs.length;
+		var length = $scope.tabs.length;
 		for(var i = 0; i < length; i++) {
-		    if ($scope.$storage.tabs[i].id == tabId) {
+		    if ($scope.tabs[i].id == tabId) {
 		        return i;
 		    }
 		}
 	}
+
+	NotifyingService.subscribe($scope, function changed(){
+		Session.
+	});
 }

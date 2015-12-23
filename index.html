@@ -51,7 +51,7 @@
         <div id="tabs">
           <ul class="tabList">
             <li class="tab" ng-repeat="tab in $storage.tabs" ng-class="{active:isActiveTab(tab.id)}" ng-click="onClickTab(tab)">
-              <edit-in-place-single class="tabEdit" value="tab.title" ng-model="newTabName" ng-keypress="loseFocus($event)"></edit-in-place-single>
+              <edit-in-place-single class="tabEdit" value="tab.title" ng-model="newTabName" ng-keypress="loseFocus($event, tab)"></edit-in-place-single>
               <p class="delBtn" ng-click="deleteTab(tab.id)">x</p>
             </li>
             <div class="addTabContainer">
@@ -67,7 +67,7 @@
                         <p class='closeBtn' ng-click="deleteItem(item.id)">x</p>
                         <label class="dateLbl">{{item.date | date:'MM-dd'}}</label>
                         <br>
-                    <edit-in-place-multi class="itemEdit" value="item.text" ng-keypress="loseFocus($event)"></edit-in-place>
+                    <edit-in-place-multi class="itemEdit" value="item.text" ng-keypress="loseFocus($event, item)"></edit-in-place>
                       </div>
                   </li>
                 </ul>
