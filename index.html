@@ -1,10 +1,52 @@
 <!doctype html>
-<html ng-app='myApp'>
+<html ng-app='toDoApp'>
   <head>
     <link rel="stylesheet" href="app/Styles/global.css">
+    <link type="text/css" rel="stylesheet" href="app/Styles/angular-flash.css" />
   </head>
-  <body>
-      <h1 class="appHeader">Get organized and keep a To Do list</h1>
+  <body ng-controller="applicationController">
+      <div class="logRegContainer">
+        <h2 class="siteTitle"><a href="#main" class="homeLink">ToDo</a></h2>
+        <div ng-switch="userStatus">            
+           <div ng-switch-when="login" class="loginControls">
+                <form name='loginForm' ng-controller='loginController' ng-submit="login(credentials)" >
+                    <label for="email">Email:</label>
+                    <input type="text" name="userEmail" id="email" ng-model="credentials.userEmail" required>
+
+                    <label for="password">Password:</label>
+                    <input type="password" name="userPassword" id="password" ng-model="credentials.userPassword" required>
+
+                    <button type="submit" class='logRegBtns'>Login</button>
+                    <button ng-click="setNone()" class='logRegBtns'>Cancel</button>
+                </form>
+            </div>
+            <div ng-switch-when="register" class='registerControls'>
+                <form name='registrationForm' ng-controller='registrationController' ng-submit="register(registrationData)" >
+                    <label for="email">Email:</label>
+                    <input type="text" name="userEmail" id="regEmail" ng-model="registrationData.userEmail" required>
+
+                    <label for="username">Username:</label>
+                    <input type="text" name="userName" id="regUsername" ng-model="registrationData.userName" required>
+
+                    <label for="email">Password:</label>
+                    <input type="password" name="userPassword" id="regPassword" ng-model="registrationData.userPassword" required>
+
+                    <button type="submit" class='logRegBtns'>Register</button>
+                    <button ng-click="setNone()" class='logRegBtns'>Cancel</button>
+                </form>
+            </div>
+            <div ng-switch-when="loggedIn" class='userInfo'>
+                <label class="userNameLbl headerItem">{{currentUser}}</label>
+                <label class="settingsLbl headerItem">Settings</label>
+                <label class="logoutLbl headerItem">Logout</label>
+            </div>
+            <div ng-switch-default class="logRegBtnsBox">
+                <button ng-click="setLogin()" class='logRegBtns'>Login</button>
+                <button ng-click="setRegister()" class='logRegBtns'>Register</button>
+            </div>
+        </div>
+      </div>
+      <h1 class="appHeader">Here is what you have to do</h1>
     	<div ng-controller="mainController">
         <div id="tabs">
           <ul class="tabList">
@@ -43,8 +85,16 @@
           </div>
         </div>
       </div>
+      <div flash-message="5000"></div>
       <script src="app/Vendor/angular.min.js"></script>
+      <script src="app/Vendor/angular-route-min.js"></script>
+      <script src="app/Vendor/angular-cookies-min.js"></script>
+      <script src="app/Vendor/angular-flash.js"></script>
       <script src="app/Vendor/ngStorage.min.js"></script>
       <script src="app/js/main.js"></script>
+      <script src="app/Controllers/mainController.js"></script>
+      <script src="app/Controllers/applicationController.js"></script>
+      <script src="app/Controllers/loginController.js"></script>
+      <script src="app/Controllers/registrationController.js"></script>
   </body>
 </html>

@@ -2,8 +2,82 @@ html{
 	font-family: Helvetica Arial Verdana;
 }
 
+.logRegContainer{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 40px;
+	background-color: #8E3E98;
+	color: white;
+}
+
+.siteTitle{
+	position: absolute;
+	top: 5px;
+	left: 10px;
+	color: white;
+	margin: 0;
+}
+
+.homeLink{
+	text-decoration: none;
+	color: white;
+}
+
+.loginRegControls{
+	position: fixed;
+	top: 0;
+	left: 0;
+	margin: 0;
+	width: 100%;
+	height: 40px;
+	background-color: white;
+}
+
+.logRegBtnsBox{
+	position: absolute;
+	top: 5px;
+	right: 10px;	
+}
+
+.logRegBtns{
+	display: inline-block;
+	border-color: white;
+	border-radius: 5px;
+	padding: 3px;
+	font-size: 12pt;
+	background-color: white;
+	color: #8E3E98;
+}
+
+.logRegBtns:hover{
+	border-color: black;
+}
+
+.loginControls{
+	position: absolute;
+	top: 5px;
+	right: 10px;
+	color: white;
+}
+
+.registerControls{
+	position: absolute;
+	top: 5px;
+	right: 10px;
+}
+
 .appHeader{
 	font-size: 18pt;
+	margin-top: 40px;
+}
+
+.userInfo{
+	position: absolute;
+	top: 5px;
+	right: 10px;
+	color: white;
 }
 
 .tabList{
