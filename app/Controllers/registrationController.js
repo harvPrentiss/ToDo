@@ -2,9 +2,9 @@ angular.module('toDoApp')
 
 .controller('registrationController', registrationController);
 
-registrationController.$inject = ['$scope', '$rootScope', 'AUTH_EVENTS', 'RegService', 'Flash'];
+registrationController.$inject = ['$scope', '$rootScope', 'AUTH_EVENTS', 'RegService', 'NotifyingService'];
 
-function registrationController($scope, $rootScope, AUTH_EVENTS, RegService, Flash)
+function registrationController($scope, $rootScope, AUTH_EVENTS, RegService, NotifyingService)
 {
 	$scope.registrationData = {
 		userEmail: '',
@@ -19,6 +19,7 @@ function registrationController($scope, $rootScope, AUTH_EVENTS, RegService, Fla
 				$rootScope.$broadcast(AUTH_EVENTS.registrationSuccess);
 				$scope.setCurrentUser(user);
 				$scope.setLoggedIn(user);
+				NotifyingService.notify();
 			}
 		});
 	}

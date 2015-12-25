@@ -38,7 +38,7 @@
             <div ng-switch-when="loggedIn" class='userInfo'>
                 <label class="userNameLbl headerItem">{{currentUser}}</label>
                 <label class="settingsLbl headerItem">Settings</label>
-                <label class="logoutLbl headerItem">Logout</label>
+                <label class="logoutLbl headerItem" ng-click="logout()">Logout</label>
             </div>
             <div ng-switch-default class="logRegBtnsBox">
                 <button ng-click="setLogin()" class='logRegBtns'>Login</button>
@@ -47,27 +47,27 @@
         </div>
       </div>
       <h1 class="appHeader">Here is what you have to do</h1>
-    	<div ng-controller="mainController">
+    	<div ng-controller="mainController" ng-show="loggedIn">
         <div id="tabs">
           <ul class="tabList">
-            <li class="tab" ng-repeat="tab in $storage.tabs" ng-class="{active:isActiveTab(tab.id)}" ng-click="onClickTab(tab)">
-              <edit-in-place-single class="tabEdit" value="tab.title" ng-model="newTabName" ng-keypress="loseFocus($event, tab)"></edit-in-place-single>
+            <li class="tab" ng-repeat="tab in tabs" ng-class="{active:isActiveTab(tab.id)}" ng-click="onClickTab(tab)">
+              <edit-in-place-single class="tabEdit" value="tab.tabName" ng-model="newTabName" ng-keypress="loseFocus($event, tab)"></edit-in-place-single>
               <p class="delBtn" ng-click="deleteTab(tab.id)">x</p>
             </li>
             <div class="addTabContainer">
               <button class="addTabBtn" ng-click="addTab()">+</button>
             </div>
           </ul>
-          <div id="mainView" ng-show="$storage.tabs.length">
-            <h1 ng-hide="$storage.items.length">You have nothing to do!</h1>
-            <div class="notesArea" ng-show="$storage.items.length">
+          <div id="mainView" ng-show="tabs.length">
+            <h1 ng-hide="notes.length">You have nothing to do!</h1>
+            <div class="notesArea" ng-show="notes.length">
                 <ul class="toDoList">
-                  <li ng-repeat="item in $storage.items | filter:{tabId: currentTab} | orderBy: '-importance'">
-                      <div class="itemContainer" style="background:{{importanceColors[item.importance]}}">
-                        <p class='closeBtn' ng-click="deleteItem(item.id)">x</p>
-                        <label class="dateLbl">{{item.date | date:'MM-dd'}}</label>
+                  <li ng-repeat="note in notes | filter:{tabId: currentTab} | orderBy: '-importanceLevel'">
+                      <div class="itemContainer" style="background:{{importanceColors[note.importanceLevel]}}">
+                        <p class='closeBtn' ng-click="deleteItem(note.id)">x</p>
+                        <label class="dateLbl">{{note.date | date:'MM-dd'}}</label>
                         <br>
-                    <edit-in-place-multi class="itemEdit" value="item.text" ng-keypress="loseFocus($event, item)"></edit-in-place>
+                    <edit-in-place-multi class="itemEdit" value="note.noteText" ng-keypress="loseFocus($event, note)"></edit-in-place>
                       </div>
                   </li>
                 </ul>
@@ -92,9 +92,9 @@
       <script src="app/Vendor/angular-flash.js"></script>
       <script src="app/Vendor/ngStorage.min.js"></script>
       <script src="app/js/main.js"></script>
-      <script src="app/Controllers/mainController.js"></script>
-      <script src="app/Controllers/applicationController.js"></script>
+      <script src="app/Controllers/mainController.js"></script>      
       <script src="app/Controllers/loginController.js"></script>
       <script src="app/Controllers/registrationController.js"></script>
+      <script src="app/Controllers/applicationController.js"></script>
   </body>
 </html>

@@ -121,7 +121,7 @@ app.factory('AuthService', function($http, $cookies, Session, Flash){
 				Session.create(res.data.id, res.data.userName, "User");
 				$cookies.put('loggedIn', 'true');
 				$cookies.put('userId', res.data.id);
-				$cookies.put('userName', res.data.userName);			
+				$cookies.put('userName', res.data.userName);
 				return res.data.userName;
 			}
 			else{
@@ -142,6 +142,13 @@ app.factory('AuthService', function($http, $cookies, Session, Flash){
 		else{
 			return false;
 		}
+	}
+
+	authService.logout = function(){
+		$cookies.remove('userId');
+		$cookies.remove('userName');
+		$cookies.remove('loggedIn');
+		Session.destroy();
 	}
 
 	authService.isAuthorized = function(authorizedRoles){
@@ -213,6 +220,9 @@ app.service('Session', function(){
 });
 
 app.run(function($rootScope, $cookies, AuthService, NotifyingService){
+	if($cookies.get('userId')){
+		$rootScope.loggedIn = true;
+	}
 	$rootScope.$on('$routeChangeStart', function(){
 		if(AuthService.isLoggedIn){
 			NotifyingService.notify();

@@ -2,9 +2,9 @@ angular.module('toDoApp')
 
 .controller('loginController', loginController);
 
-loginController.$inject = ['$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService'];
+loginController.$inject = ['$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService', 'NotifyingService'];
 
-function loginController($scope, $rootScope, AUTH_EVENTS, AuthService)
+function loginController($scope, $rootScope, AUTH_EVENTS, AuthService, NotifyingService)
 {
 	$scope.credentials = {
 		userEmail: '',
@@ -18,6 +18,7 @@ function loginController($scope, $rootScope, AUTH_EVENTS, AuthService)
 				$rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
 				$scope.setCurrentUser(user);
 				$scope.setLoggedIn();
+				NotifyingService.notify();
 			}
 		});
 	}

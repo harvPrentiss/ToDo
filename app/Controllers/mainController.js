@@ -2,17 +2,15 @@ angular.module('toDoApp')
 
 .controller('mainController', mainController);
 
-mainController.$inject = ['$scope', '$rootScope', '$location', '$http', 'Session', ''];
+mainController.$inject = ['$scope', '$rootScope', '$location', '$http', 'Session', 'AuthService', 'Flash'];
 
-function mainController($scope, $rootScope, $location, $http)
+function mainController($scope, $rootScope, $location, $http, Session, AuthService, Flash)
 {
-	var itemID = 1;
-	var tabId = 1;
 	$scope.title = "TO DO";
 	$scope.importance = 1;
 	$scope.importanceColors = ["#89C1F1", "#FFFF64", "#DA5353"];
 	$scope.tabs = [];
-	$scope.items = [];
+	$scope.notes = [];
 	$scope.currentTab = 0;
 
 	$scope.onClickTab = function (tab) {
@@ -24,7 +22,7 @@ function mainController($scope, $rootScope, $location, $http)
     }
 
 	$scope.addItem = function(itemText){
-		var addItemData = {tabId: $scope.currentTab, text:itemText, importance:parseInt($scope.importance), date:Date.now(), action:'addItem'};
+		var addItemData = {userId:Session.userId, tabId: $scope.currentTab, noteText:itemText, importance:parseInt($scope.importance), date:Date.now(), action:'addNote'};
 		$http({
 			method: 'POST',
 			url:'app/PHP/dataRetriever.php',
@@ -32,18 +30,17 @@ function mainController($scope, $rootScope, $location, $http)
 		})
 		.then(function(res){
 			if(res.data.message == "Success"){
-				$scope.items.push({id:res.data.itemID, tabId: $scope.currentTab, text:itemText, importance:parseInt($scope.importance), date:Date.now()});
-				itemID++;
+				$scope.notes.push({id:res.data.noteId, tabId: $scope.currentTab, noteText:itemText, importanceLevel:parseInt(res.data.importanceLevel), date:Date.now()});
 				$scope.newItemText = "";
 			}
 			else{
-				Flash.create('danger', 'Failed to create new tab', 'custom-class');
+				Flash.create('danger', 'Failed to create new item', 'custom-class');
 			}			
 		});
 	};
 
 	$scope.addTab = function(){		
-		var addTabData = {title:"New Tab", action:'addTab'};
+		var addTabData = {userId:Session.userId, tabName:"New Tab", action:'addTab'};
 		$http({
 			method: 'POST',
 			url:'app/PHP/dataRetriever.php',
@@ -51,8 +48,7 @@ function mainController($scope, $rootScope, $location, $http)
 		})
 		.then(function(res){
 			if(res.data.message == "Success"){
-				$scope.tabs.push({id:res.data.tabId, title:"New Tab"});
-				tabId++;
+				$scope.tabs.push({id:res.data.tabId, tabName:"New Tab"});
 			}
 			else{
 				Flash.create('danger', 'Failed to create new tab', 'custom-class');
@@ -60,18 +56,18 @@ function mainController($scope, $rootScope, $location, $http)
 		});
 	};
 
-	$scope.deleteItem = function(itemID){
-		var delItemData = {id:itemId, action:'delItem'};
+	$scope.deleteItem = function(noteId){
+		var delNoteData = {noteId:noteId, action:'delNote'};
 		$http({
 			method: 'POST',
 			url:'app/PHP/dataRetriever.php',
-			data: delItemData
+			data: delNoteData
 		})
 		.then(function(res){
 			if(res.data.message == "Success"){
-				var index = indexOfItem(itemID);
+				var index = indexOfNote(noteId);
 				if(index != -1){
-		  			$scope.items.splice(index, 1);
+		  			$scope.notes.splice(index, 1);
 		  		}
 			}
 			else{
@@ -82,7 +78,7 @@ function mainController($scope, $rootScope, $location, $http)
 	};
 
 	$scope.deleteTab = function(tabId){
-		var delTabData = {id:tabId, action:'delTab'};
+		var delTabData = {tabId:tabId, action:'delTab'};
 		$http({
 			method: 'POST',
 			url:'app/PHP/dataRetriever.php',
@@ -98,15 +94,14 @@ function mainController($scope, $rootScope, $location, $http)
 			else{
 				Flash.create('danger', 'Failed to delete tab', 'custom-class');
 			}			
-		});
-		
+		});		
 	};
 
 	$scope.loseFocus = function(event, object){
 		if(event.which == 13){	
 			var changeData;
-			if(object.itemId){
-				changeData = {itemId:object.itemId, itemText:object.text, action:'editItem'};
+			if(object.tabId){
+				changeData = {noteId:object.id, noteText:object.noteText, action:'editNote'};
 				$http({
 				method: 'POST',
 				url:'app/PHP/dataRetriever.php',
@@ -117,12 +112,13 @@ function mainController($scope, $rootScope, $location, $http)
 					event.srcElement.blur();
 				}
 				else{
-					Flash.create('danger', 'Failed to delete tab', 'custom-class');
+					Flash.create('danger', 'Failed to edit tab', 'custom-class');
+
 				}			
 			});	
 			}
 			else{
-				changeData = {tabId:object.tabId, tabText:object.title, action:'editTab'};
+				changeData = {tabId:object.id, tabName:object.tabName, action:'editTab'};
 				$http({
 					method: 'POST',
 					url:'app/PHP/dataRetriever.php',
@@ -133,18 +129,51 @@ function mainController($scope, $rootScope, $location, $http)
 						event.srcElement.blur();
 					}
 					else{
-						Flash.create('danger', 'Failed to delete tab', 'custom-class');
+						Flash.create('danger', 'Failed to edit tab', 'custom-class');
 					}			
 				});	
 			}
 		}			
 	};
 
-	function indexOfItem(itemID){
+	$scope.getTabs = function(){
+		var getTabData = {userId:Session.userId, action:'getTabs'};
+		$http({
+			method: 'POST',
+			url:'app/PHP/dataRetriever.php',
+			data: getTabData
+		})
+		.then(function(res){
+			if(res.data.message == "Success"){
+				// Load tabs here
+				$scope.tabs = res.data.tabs;
+			}			
+		});
+	};
+
+	$scope.getNotes = function(tabId){
+		var getNoteData = {userId:Session.userId, action:'getNotes'};
+		$http({
+			method: 'POST',
+			url:'app/PHP/dataRetriever.php',
+			data: getNoteData
+		})
+		.then(function(res){
+			if(res.data.message == "Success"){
+				// Load notes here
+				$scope.notes = res.data.notes;
+			}
+			else{
+				//Flash.create('danger', res.data.message, 'custom-class');
+			}			
+		});
+	};
+
+	function indexOfNote(noteID){
 		var index = -1;
-		var length = $scope.items.length;
+		var length = $scope.notes.length;
 		for(var i = 0; i < length; i++) {
-		    if ($scope.$storage.items[i].id == itemID) {
+		    if ($scope.notes[i].id == noteID) {
 		        return i;
 		    }
 		}
@@ -160,7 +189,8 @@ function mainController($scope, $rootScope, $location, $http)
 		}
 	}
 
-	NotifyingService.subscribe($scope, function changed(){
-		Session.
-	});
+	if(AuthService.isLoggedIn){
+		$scope.getTabs();
+		$scope.getNotes();
+	}
 }

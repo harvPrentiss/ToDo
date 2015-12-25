@@ -128,11 +128,12 @@
 		if(!connectionExists()){
 			getConnection();
 		}
-		$tabTitle = $_POST['tabTitle'];
-		$stmt = $dbConnection->prepare("INSERT INTO tabs (tabName) VALUES ('$tabTitle')");
+		$tabName = $_POST['tabName'];
+		$userId = $_POST['userId'];
+		$stmt = $dbConnection->prepare("INSERT INTO tabs (tabName, userId) VALUES ('$tabName', '$userId')");
 		$stmt->execute();
 		$tabData = array();
-		if($stmt == TRUE){
+		if($stmt->rowCount() > 0){
 			$tabData['tabId'] = $dbConnection->lastInsertId();
 			$tabData['message'] = 'Success';
 		}
@@ -148,10 +149,10 @@
 			getConnection();
 		}
 		$tabId = $_POST['tabId'];
-		$stmt = $dbConnection->prepare("DELETE FROM tabs WHERE tabId='$tabId'");
+		$stmt = $dbConnection->prepare("DELETE FROM tabs WHERE id='$tabId'");
 		$stmt->execute();
 		$tabData = array();
-		if($stmt == TRUE){
+		if($stmt->rowCount() > 0){
 			$tabData['message'] = 'Success';
 		}
 		else{
@@ -166,15 +167,16 @@
 			getConnection();
 		}
 		$tabId = $_POST['tabId'];
-		$tabTitle = $_POST['tabTitle'];
-		$stmt = $dbConnection->prepare("UPDATE tabs (tabTitle) VALUES ('$tabTitle') WHERE tabId='$tabId'");
+		$tabName = $_POST['tabName'];
+		$stmt = $dbConnection->prepare("UPDATE tabs SET tabName='$tabName' WHERE id='$tabId'");
 		$stmt->execute();
 		$tabData = array();
-		if($stmt == TRUE){
+		if($stmt->rowCount() > 0){
 			$tabData['message'] = 'Success';
 		}
 		else{
 			$tabData['message'] = 'Failed to edit the tab';
+			$tabData['params'] = $_POST;
 		}	
 		echo json_encode($tabData);
 	}
@@ -193,7 +195,8 @@
 			$tabData['message'] = 'Success';
 		}	
 		else{
-			$tabData['message'] = 'Failed to get tabs';
+			$tabData['message'] = 'You have no tabs!';
+			$tabData['params'] = $_POST;
 		}
 		echo json_encode($tabData);
 	}
@@ -203,18 +206,21 @@
 		if(!connectionExists()){
 			getConnection();
 		}
-		$noteTitle = $_POST['noteTitle'];
+		$noteText = $_POST['noteText'];
 		$tabId = $_POST['tabId'];
+		$userId = $_POST['userId'];
 		$importance = $_POST['importance'];
-		$stmt = $dbConnection->prepare("INSERT INTO notes (noteText, importanceLevel, tabId) VALUES ('$noteTitle', '$importance' '$tabId')");
+		$stmt = $dbConnection->prepare("INSERT INTO notes (noteText, importanceLevel, tabId, userId) VALUES ('$noteText', '$importance', '$tabId', '$userId')");
 		$stmt->execute();
 		$noteData = array();
-		if($stmt == TRUE){
+		if($stmt->rowCount() > 0){
 			$noteData['noteId'] = $dbConnection->lastInsertId();
+			$noteData['importanceLevel'] = $importance;
 			$noteData['message'] = 'Success';
 		}
 		else{
 			$noteData['message'] = 'Failed to create the note';
+			$noteData['params'] = $_POST;
 		}	
 		echo json_encode($noteData);
 	}
@@ -225,7 +231,7 @@
 			getConnection();
 		}	
 		$noteId = $_POST['noteId'];
-		$stmt = $dbConnection->prepare("DELETE FROM notes WHERE noteId='$noteId'");
+		$stmt = $dbConnection->prepare("DELETE FROM notes WHERE id='$noteId'");
 		$stmt->execute();
 		$noteData = array();
 		if($stmt == TRUE){
@@ -243,8 +249,8 @@
 			getConnection();
 		}
 		$noteId = $_POST['noteId'];
-		$noteTitle = $_POST['noteTitle'];
-		$stmt = $dbConnection->prepare("UPDATE notes (noteTitle) VALUES ('$noteTitle') WHERE noteId='$noteId'");
+		$noteText = $_POST['noteText'];
+		$stmt = $dbConnection->prepare("UPDATE notes SET noteText='$noteText' WHERE id='$noteId'");
 		$stmt->execute();
 		$noteData = array();
 		if($stmt == TRUE){
@@ -261,8 +267,8 @@
 		if(!connectionExists()){
 			getConnection();
 		}
-		$tabId = $_POST['tabId'];
-		$stmt = $dbConnection->prepare("SELECT * FROM notes WHERE tabId='$tabId'");
+		$userId = $_POST['userId'];
+		$stmt = $dbConnection->prepare("SELECT * FROM notes WHERE userId='$userId'");
 		$stmt->execute();
 		$noteData = array();
 		if($stmt->rowCount() > 0){
@@ -270,7 +276,7 @@
 			$noteData['message'] = 'Success';
 		}	
 		else{
-			$noteData['message'] = 'Failed to get notes';
+			$noteData['message'] = 'You have no notes!';
 		}
 		echo json_encode($noteData);
 	}
