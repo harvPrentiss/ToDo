@@ -2,9 +2,9 @@ angular.module('toDoApp')
 
 .controller('mainController', mainController);
 
-mainController.$inject = ['$scope', '$rootScope', '$location', '$http', 'Session', 'AuthService', 'Flash'];
+mainController.$inject = ['$scope', '$rootScope', '$location', '$http', 'Session', 'AuthService', 'Flash', 'NotifyingService'];
 
-function mainController($scope, $rootScope, $location, $http, Session, AuthService, Flash)
+function mainController($scope, $rootScope, $location, $http, Session, AuthService, Flash, NotifyingService)
 {
 	$scope.title = "TO DO";
 	$scope.importance = 1;
@@ -49,6 +49,7 @@ function mainController($scope, $rootScope, $location, $http, Session, AuthServi
 		.then(function(res){
 			if(res.data.message == "Success"){
 				$scope.tabs.push({id:res.data.tabId, tabName:"New Tab"});
+				$scope.currentTab = res.data.tabId;
 			}
 			else{
 				Flash.create('danger', 'Failed to create new tab', 'custom-class');
@@ -147,6 +148,9 @@ function mainController($scope, $rootScope, $location, $http, Session, AuthServi
 			if(res.data.message == "Success"){
 				// Load tabs here
 				$scope.tabs = res.data.tabs;
+				if($scope.tabs.length > 0){
+					$scope.currentTab = $scope.tabs[0].id;
+				}
 			}			
 		});
 	};
@@ -193,4 +197,9 @@ function mainController($scope, $rootScope, $location, $http, Session, AuthServi
 		$scope.getTabs();
 		$scope.getNotes();
 	}
+
+	NotifyingService.subscribe($scope, function changed(){
+		$scope.getTabs();
+		$scope.getNotes();		
+	});
 }

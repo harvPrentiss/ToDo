@@ -2,9 +2,9 @@ angular.module('toDoApp')
 
 .controller('applicationController', applicationController);
 
-applicationController.$inject = ['$scope', '$rootScope', '$cookies', 'USER_ROLES', 'AuthService', 'Session'];
+applicationController.$inject = ['$scope', '$rootScope', '$cookies', 'USER_ROLES', 'AuthService', 'Session', 'NotifyingService'];
 
-function applicationController($scope, $rootScope, $cookies, USER_ROLES, AuthService, Session)
+function applicationController($scope, $rootScope, $cookies, USER_ROLES, AuthService, Session, NotifyingService)
 {
 	$scope.currentUser = null;
 	$scope.currentUserId = null;
@@ -35,11 +35,12 @@ function applicationController($scope, $rootScope, $cookies, USER_ROLES, AuthSer
 	};
 
 
-	if(AuthService.isLoggedIn){
+	if(AuthService.isLoggedIn()){
 		Session.create($cookies.get('userId'), $cookies.get('userName'),"User")
 		$scope.userStatus = "loggedIn";
 		$scope.loggedIn = true;
 		$scope.currentUser = $cookies.get('userName');
 		$scope.currentUserId = $cookies.get('userId');
+		NotifyingService.notify();
 	}
 }
