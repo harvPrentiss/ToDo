@@ -210,7 +210,8 @@
 		$tabId = $_POST['tabId'];
 		$userId = $_POST['userId'];
 		$importance = $_POST['importance'];
-		$stmt = $dbConnection->prepare("INSERT INTO notes (noteText, importanceLevel, tabId, userId) VALUES ('$noteText', '$importance', '$tabId', '$userId')");
+		$date = date('Y-m-d H:i:s');
+		$stmt = $dbConnection->prepare("INSERT INTO notes (noteText, importanceLevel, dateCreated, tabId, userId) VALUES ('$noteText', '$importance', '$date', '$tabId', '$userId')");
 		$stmt->execute();
 		$noteData = array();
 		if($stmt->rowCount() > 0){
