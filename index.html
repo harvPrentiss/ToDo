@@ -65,7 +65,7 @@
                   <li ng-repeat="note in notes | filter:{tabId: currentTab} | orderBy: '-importanceLevel'">
                       <div class="itemContainer" style="background:{{importanceColors[note.importanceLevel]}}">
                         <p class='closeBtn' ng-click="deleteItem(note.id)">x</p>
-                        <label class="dateLbl">{{note.date | date:'MM-dd'}}</label>
+                        <label class="dateLbl">{{note.dateCreated | date:'MM-dd'}}</label>
                         <br>
                     <edit-in-place-multi class="itemEdit" value="note.noteText" ng-keypress="loseFocus($event, note)"></edit-in-place>
                       </div>
